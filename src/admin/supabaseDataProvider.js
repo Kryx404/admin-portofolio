@@ -234,6 +234,32 @@ const supabaseDataProvider = {
         if (error) throw error;
         return { data: params.ids };
     },
+    getMany: async (resource, params) => {
+        const { data, error } = await supabase
+            .from(resource)
+            .select("*")
+            .in("id", params.ids);
+        if (error) throw error;
+        return { data: data || [] };
+    },
+
+    getManyReference: async (resource, params) => {
+        const { page = 1, perPage = 1000 } = params.pagination || {};
+        const { field = "id", order = "ASC" } = params.sort || {};
+        const start = (page - 1) * perPage;
+        const end = start + perPage - 1;
+
+        let query = supabase
+            .from(resource)
+            .select("*", { count: "exact" })
+            .eq(params.target, params.id)
+            .order(field, { ascending: order === "ASC" })
+            .range(start, end);
+
+        const { data, count, error } = await query;
+        if (error) throw error;
+        return { data: data || [], total: count ?? (data ? data.length : 0) };
+    },
 };
 
 export default supabaseDataProvider;
