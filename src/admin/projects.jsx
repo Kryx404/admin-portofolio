@@ -13,6 +13,9 @@ import {
     ImageField,
     FunctionField,
     Labeled,
+    ReferenceField,
+    ReferenceInput,
+    SelectInput,
 } from "react-admin";
 import ImageCell from "../utils/ImageCell";
 
@@ -36,6 +39,13 @@ export const ProjectList = (props) => (
                 render={(record) => <ImageCell src={record.image_url} />}
             />
             <TextField source="slug" />
+            <ReferenceField
+                label="Kategori"
+                source="category_id"
+                reference="project_category"
+                link={false}>
+                <TextField source="kategori" />
+            </ReferenceField>
             <DateField source="created_at" />
         </Datagrid>
     </List>
@@ -49,6 +59,12 @@ export const ProjectEdit = (props) => (
             <TextInput source="title" />
             <TextInput source="description" />
             <TextInput source="slug" />
+            <ReferenceInput
+                source="category_id"
+                reference="project_category"
+                label="Kategori">
+                <SelectInput optionText="kategori" />
+            </ReferenceInput>
             <Labeled label="Gambar Lama">
                 <ImageField source="image_url" />
             </Labeled>
@@ -69,6 +85,12 @@ export const ProjectCreate = (props) => (
             <TextInput source="title" />
             <TextInput source="description" />
             <TextInput source="slug" />
+            <ReferenceInput
+                source="category_id"
+                reference="project_category"
+                label="Kategori">
+                <SelectInput optionText="kategori" />
+            </ReferenceInput>
             <ImageInput source="image_url" label="Image" accept="image/*">
                 <ImageField source="src" title="title" />
             </ImageInput>
@@ -84,7 +106,14 @@ export const ProjectShow = (props) => (
             <TextField source="title" />
             <TextField source="description" />
             <TextField source="slug" />
-             <Labeled label="Gambar">
+            <ReferenceField
+                label="Kategori"
+                source="category_id"
+                reference="project_category"
+                link={false}>
+                <TextField source="kategori" />
+            </ReferenceField>
+            <Labeled label="Gambar">
                 <ImageField source="image_url" />
             </Labeled>
         </SimpleShowLayout>
