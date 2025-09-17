@@ -19,6 +19,7 @@ import {
     SertifikatEdit,
     SertifikatShow,
 } from "./sertifikat";
+import { CategoryList, CategoryEdit, CategoryCreate } from "./project_category";
 
 const CustomLoginPage = () => <Login usernameLabel="Email" />;
 
@@ -47,6 +48,12 @@ const MyAdmin = () => (
             create={SertifikatCreate}
             edit={SertifikatEdit}
             show={SertifikatShow}
+        />
+        <Resource
+            name="project_category"
+            list={CategoryList}
+            edit={CategoryEdit}
+            create={CategoryCreate}
         />
     </Admin>
 );
