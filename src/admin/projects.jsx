@@ -46,6 +46,8 @@ export const ProjectList = (props) => (
                 link={false}>
                 <TextField source="kategori" />
             </ReferenceField>
+            <TextField source="github" />
+            <TextField source="preview" />
             <DateField source="created_at" />
         </Datagrid>
     </List>
@@ -65,6 +67,8 @@ export const ProjectEdit = (props) => (
                 label="Kategori">
                 <SelectInput optionText="kategori" />
             </ReferenceInput>
+            <TextInput source="github" />
+            <TextInput source="preview" />
             <Labeled label="Gambar Lama">
                 <ImageField source="image_url" />
             </Labeled>
@@ -91,6 +95,8 @@ export const ProjectCreate = (props) => (
                 label="Kategori">
                 <SelectInput optionText="kategori" />
             </ReferenceInput>
+            <TextInput source="github" />
+            <TextInput source="preview" />
             <ImageInput source="image_url" label="Image" accept="image/*">
                 <ImageField source="src" title="title" />
             </ImageInput>
@@ -113,6 +119,8 @@ export const ProjectShow = (props) => (
                 link={false}>
                 <TextField source="kategori" />
             </ReferenceField>
+            <TextField source="github" />
+            <TextField source="preview" />
             <Labeled label="Gambar">
                 <ImageField source="image_url" />
             </Labeled>
