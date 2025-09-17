@@ -120,6 +120,7 @@ const supabaseDataProvider = {
         return { data };
     },
     delete: async (resource, params) => {
+        // ambil record lama (untuk path file)
         const { data: oldData, error: getError } = await supabase
             .from(resource)
             .select("*")
@@ -127,15 +128,23 @@ const supabaseDataProvider = {
             .single();
         if (getError) throw getError;
 
-        const { data, error } = await supabase
-            .from(resource)
-            .delete()
-            .eq("id", params.id)
-            .select()
-            .single();
-        if (error) throw error;
+        // helper untuk ekstrak path storage dari publicUrl
+        const extractPath = (url) => {
+            if (!url) return null;
+            try {
+                const u = new URL(url);
+                // pathname contoh: /storage/v1/object/public/assets/project/filename.png
+                const idx = u.pathname.indexOf("/assets/");
+                if (idx >= 0) return u.pathname.slice(idx + "/assets/".length);
+            } catch (e) {
+                // fallback regex
+                const match = String(url).match(/assets\/(.+)$/);
+                if (match && match[1]) return match[1];
+            }
+            return null;
+        };
 
-        // Hapus file di storage untuk semua field gambar yang relevan
+        // kumpulkan semua file keys yang perlu dihapus
         const imageFields = [
             "image_url",
             "thumbnail",
@@ -145,30 +154,85 @@ const supabaseDataProvider = {
             "mockup",
             "prototype",
         ];
+        const toRemove = [];
         for (const field of imageFields) {
-            if (oldData && oldData[field]) {
-                const url = oldData[field];
-                const match = url.match(/assets\/(.+)$/);
-                if (match && match[1]) {
-                    await supabase.storage.from("assets").remove([match[1]]);
-                }
+            const url = oldData?.[field];
+            const key = extractPath(url);
+            if (key) toRemove.push(key);
+        }
+
+        // hapus file di storage terlebih dahulu (ignore gagal hapus jika permission)
+        if (toRemove.length > 0) {
+            const { error: removeError } = await supabase.storage
+                .from("assets")
+                .remove(toRemove);
+            // jika error permission atau lainnya, log agar bisa dicek di console
+            if (removeError)
+                console.warn("Supabase storage remove error:", removeError);
+        }
+
+        // lalu hapus row dari DB
+        const { data, error } = await supabase
+            .from(resource)
+            .delete()
+            .eq("id", params.id)
+            .select()
+            .single();
+        if (error) throw error;
+        return { data };
+    },
+    deleteMany: async (resource, params) => {
+        // ambil semua record dulu untuk dapat file paths
+        const { data: records, error: getError } = await supabase
+            .from(resource)
+            .select("*")
+            .in("id", params.ids);
+        if (getError) throw getError;
+
+        const extractPath = (url) => {
+            if (!url) return null;
+            try {
+                const u = new URL(url);
+                const idx = u.pathname.indexOf("/assets/");
+                if (idx >= 0) return u.pathname.slice(idx + "/assets/".length);
+            } catch (e) {
+                const match = String(url).match(/assets\/(.+)$/);
+                if (match && match[1]) return match[1];
+            }
+            return null;
+        };
+
+        const toRemove = [];
+        const imageFields = [
+            "image_url",
+            "thumbnail",
+            "flowchart",
+            "design_system",
+            "wireframe",
+            "mockup",
+            "prototype",
+        ];
+        for (const rec of records || []) {
+            for (const f of imageFields) {
+                const key = extractPath(rec?.[f]);
+                if (key) toRemove.push(key);
             }
         }
 
-        return { data };
-    },
-    getMany: (resource, params) => {
-        // resource: nama tabel, params.ids: array id yang diminta
-        return (
-            supabase
-                .from(resource)
-                .select("*")
-                .in("id", params.ids)
-                // eslint-disable-next-line no-unused-vars
-                .then(({ data, error }) => ({
-                    data: data || [],
-                }))
-        );
+        if (toRemove.length > 0) {
+            const { error: removeError } = await supabase.storage
+                .from("assets")
+                .remove(toRemove);
+            if (removeError)
+                console.warn("Supabase storage remove error:", removeError);
+        }
+
+        const { error } = await supabase
+            .from(resource)
+            .delete()
+            .in("id", params.ids);
+        if (error) throw error;
+        return { data: params.ids };
     },
 };
 
