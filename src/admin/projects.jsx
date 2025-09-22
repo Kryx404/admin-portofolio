@@ -56,7 +56,7 @@ export const ProjectList = (props) => (
 // Edit
 export const ProjectEdit = (props) => (
     <Edit {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="list">
             <TextInput source="id" disabled />
             <TextInput source="title" />
             <TextInput source="description" />
@@ -85,7 +85,7 @@ export const ProjectEdit = (props) => (
 // Create
 export const ProjectCreate = (props) => (
     <Create {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="list">
             <TextInput source="title" />
             <TextInput source="description" />
             <TextInput source="slug" />

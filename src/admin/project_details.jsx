@@ -126,7 +126,9 @@ export const ProjectDetailsEdit = (props) => (
                 wireframe_link: data.wireframe_link,
                 mockup_link: data.mockup_link,
                 prototype_link: data.prototype_link,
-            })}>
+            })}
+            redirect="list"
+            >
             <TextInput source="id" disabled />
             <ReferenceInput
                 label="Project"
@@ -222,7 +224,8 @@ export const ProjectDetailsCreate = (props) => (
                 wireframe_link: data.wireframe_link,
                 mockup_link: data.mockup_link,
                 prototype_link: data.prototype_link,
-            })}>
+            })}
+            redirect="list">
             <ReferenceInput
                 label="Project"
                 source="project_id"
