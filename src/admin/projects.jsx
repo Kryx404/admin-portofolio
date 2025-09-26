@@ -1,5 +1,6 @@
 import {
     List,
+    SimpleList,
     Datagrid,
     TextField,
     DateField,
@@ -17,42 +18,58 @@ import {
     ReferenceInput,
     SelectInput,
 } from "react-admin";
+import { useMediaQuery } from "@mui/material";
 import ImageCell from "../utils/ImageCell";
 import { limitWords, limitChars } from "../utils/textLimit";
 
 // List
-export const ProjectList = (props) => (
-    <List {...props}>
-        <Datagrid rowClick="edit">
-            <TextField source="title" />
-            <FunctionField
-                label="Description"
-                render={(record) => limitWords(record.description)}
-            />
-            <FunctionField
-                label="Image"
-                render={(record) => <ImageCell src={record.image_url} />}
-            />
-            <TextField source="slug" />
-            <ReferenceField
-                label="Kategori"
-                source="category_id"
-                reference="project_category"
-                link={false}>
-                <TextField source="kategori" />
-            </ReferenceField>
-            <FunctionField
-                label="Github"
-                render={(record) => limitChars(record.github)}
-            />
-            <FunctionField
-                label="Preview"
-                render={(record) => limitChars(record.preview)}
-            />
-            <DateField source="created_at" />
-        </Datagrid>
-    </List>
-);
+export const ProjectList = (props) => {
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+    return (
+        <List {...props}>
+            {isSmall ? (
+                <SimpleList
+                    primaryText={(record) => record.title}
+                    secondaryText={(record) => limitWords(record.description,10)}
+                    tertiaryText={(record) => (
+                        <ImageCell src={record.image_url} />
+                    )}
+                />
+            ) : (
+                <Datagrid rowClick="edit">
+                    <TextField source="title" />
+                    <FunctionField
+                        label="Description"
+                        render={(record) => limitWords(record.description)}
+                    />
+                    <FunctionField
+                        label="Image"
+                        render={(record) => (
+                            <ImageCell src={record.image_url} />
+                        )}
+                    />
+                    <TextField source="slug" />
+                    <ReferenceField
+                        label="Kategori"
+                        source="category_id"
+                        reference="project_category"
+                        link={false}>
+                        <TextField source="kategori" />
+                    </ReferenceField>
+                    <FunctionField
+                        label="Github"
+                        render={(record) => limitChars(record.github)}
+                    />
+                    <FunctionField
+                        label="Preview"
+                        render={(record) => limitChars(record.preview)}
+                    />
+                    <DateField source="created_at" />
+                </Datagrid>
+            )}
+        </List>
+    );
+};
 
 // Edit
 export const ProjectEdit = (props) => (

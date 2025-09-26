@@ -1,5 +1,6 @@
 import {
     List,
+    SimpleList,
     Datagrid,
     TextField,
     Edit,
@@ -19,92 +20,122 @@ import {
     ReferenceInput,
     SelectInput,
 } from "react-admin";
+import { useMediaQuery } from "@mui/material";
 import { limitWords, limitChars } from "../utils/textLimit";
 import { columnWidth } from "../utils/columnWidth";
 import ImageCell from "../utils/ImageCell";
 
 // List
-export const ProjectDetailsList = (props) => (
-    <List {...props}>
-        <Datagrid rowClick="edit">
-            <ReferenceField
-                label="Project Title"
-                source="project_id"
-                reference="projects"
-                link={false}>
-                <FunctionField render={(record) => limitWords(record.title)} />
-            </ReferenceField>
-            <FunctionField
-                label="Thumbnail"
-                render={(record) => <ImageCell src={record.thumbnail} />}
-            />
-            <FunctionField
-                label="Description"
-                render={(record) => limitWords(record.description)}
-                sx={columnWidth(250, 500)}
-            />
-            <FunctionField
-                label="User research"
-                render={(record) => limitWords(record.user_research)}
-                sx={columnWidth(250, 500)}
-            />
-            <FunctionField
-                label="Flowchart"
-                render={(record) => <ImageCell src={record.flowchart} />}
-            />
-            <FunctionField
-                label="Design System"
-                render={(record) => <ImageCell src={record.design_system} />}
-            />
-            <FunctionField
-                label="Wireframe"
-                render={(record) => <ImageCell src={record.wireframe} />}
-            />
-            <FunctionField
-                label="Mockup"
-                render={(record) => <ImageCell src={record.mockup} />}
-            />
-            <FunctionField
-                label="Prototype"
-                render={(record) => <ImageCell src={record.prototype} />}
-            />
-            <ArrayField source="fitur">
-                <SingleFieldList>
+export const ProjectDetailsList = (props) => {
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+    return (
+        <List {...props}>
+            {isSmall ? (
+                <SimpleList
+                    primaryText={(record) => record.project_id}
+                    secondaryText={(record) => limitWords(record.description,10)}
+                    tertiaryText={(record) => (
+                        <ImageCell src={record.thumbnail} />
+                    )}
+                />
+            ) : (
+                <Datagrid rowClick="edit">
+                    <ReferenceField
+                        label="Project Title"
+                        source="project_id"
+                        reference="projects"
+                        link={false}>
+                        <FunctionField
+                            render={(record) => limitWords(record.title)}
+                        />
+                    </ReferenceField>
                     <FunctionField
-                        render={(record) =>
-                            record && record.title ? record.title : ""
-                        }
-                        sx={columnWidth(200, 400)}
+                        label="Thumbnail"
+                        render={(record) => (
+                            <ImageCell src={record.thumbnail} />
+                        )}
                     />
-                </SingleFieldList>
-            </ArrayField>
-            <FunctionField
-                label="User research link"
-                render={(record) => limitChars(record.user_research_link)}
-            />
-            <FunctionField
-                label="Flowchart link"
-                render={(record) => limitChars(record.flowchart_link)}
-            />
-            <FunctionField
-                label="Design system link"
-                render={(record) => limitChars(record.design_system_link)}
-            />
-            <FunctionField
-                label="Wireframe link"
-                render={(record) => limitChars(record.wireframe_link)}
-            />
-            <FunctionField
-                label="Mockup link"
-                render={(record) => limitChars(record.mockup_link)}
-            />
-            <FunctionField
-                label="Prototype link"
-                render={(record) => limitChars(record.prototype_link)}
-            />
-        </Datagrid>
-    </List>
-);
+                    <FunctionField
+                        label="Description"
+                        render={(record) => limitWords(record.description)}
+                        sx={columnWidth(250, 500)}
+                    />
+                    <FunctionField
+                        label="User research"
+                        render={(record) => limitWords(record.user_research)}
+                        sx={columnWidth(250, 500)}
+                    />
+                    <FunctionField
+                        label="Flowchart"
+                        render={(record) => (
+                            <ImageCell src={record.flowchart} />
+                        )}
+                    />
+                    <FunctionField
+                        label="Design System"
+                        render={(record) => (
+                            <ImageCell src={record.design_system} />
+                        )}
+                    />
+                    <FunctionField
+                        label="Wireframe"
+                        render={(record) => (
+                            <ImageCell src={record.wireframe} />
+                        )}
+                    />
+                    <FunctionField
+                        label="Mockup"
+                        render={(record) => <ImageCell src={record.mockup} />}
+                    />
+                    <FunctionField
+                        label="Prototype"
+                        render={(record) => (
+                            <ImageCell src={record.prototype} />
+                        )}
+                    />
+                    <ArrayField source="fitur">
+                        <SingleFieldList>
+                            <FunctionField
+                                render={(record) =>
+                                    record && record.title ? record.title : ""
+                                }
+                                sx={columnWidth(200, 400)}
+                            />
+                        </SingleFieldList>
+                    </ArrayField>
+                    <FunctionField
+                        label="User research link"
+                        render={(record) =>
+                            limitChars(record.user_research_link)
+                        }
+                    />
+                    <FunctionField
+                        label="Flowchart link"
+                        render={(record) => limitChars(record.flowchart_link)}
+                    />
+                    <FunctionField
+                        label="Design system link"
+                        render={(record) =>
+                            limitChars(record.design_system_link)
+                        }
+                    />
+                    <FunctionField
+                        label="Wireframe link"
+                        render={(record) => limitChars(record.wireframe_link)}
+                    />
+                    <FunctionField
+                        label="Mockup link"
+                        render={(record) => limitChars(record.mockup_link)}
+                    />
+                    <FunctionField
+                        label="Prototype link"
+                        render={(record) => limitChars(record.prototype_link)}
+                    />
+                </Datagrid>
+            )}{" "}
+        </List>
+    );
+};
 
 // Edit
 export const ProjectDetailsEdit = (props) => (
@@ -127,8 +158,7 @@ export const ProjectDetailsEdit = (props) => (
                 mockup_link: data.mockup_link,
                 prototype_link: data.prototype_link,
             })}
-            redirect="list"
-            >
+            redirect="list">
             <TextInput source="id" disabled />
             <ReferenceInput
                 label="Project"

@@ -1,5 +1,6 @@
 import {
     List,
+    SimpleList,
     Datagrid,
     TextField,
     Edit,
@@ -13,31 +14,47 @@ import {
     Labeled,
     FunctionField,
 } from "react-admin";
+import { useMediaQuery } from "@mui/material";
 import { limitWords } from "../utils/textLimit";
 import ImageCell from "../utils/ImageCell";
 import { columnWidth } from "../utils/columnWidth";
 
 // List
-export const SertifikatList = (props) => (
-    <List {...props}>
-        <Datagrid rowClick="edit">
-            <FunctionField
-                label="Title"
-                render={(record) => limitWords(record.title, 5)}
-                sx={columnWidth(400, 700)}
-            />
-            <FunctionField
-                label="Description"
-                render={(record) => limitWords(record.description, 5)}
-                sx={columnWidth(400, 700)}
-            />
-            <FunctionField
-                label="Image"
-                render={(record) => <ImageCell src={record.image_url} />}
-            />
-        </Datagrid>
-    </List>
-);
+export const SertifikatList = (props) => {
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+    return (
+        <List {...props}>
+            {isSmall ? (
+                <SimpleList
+                    primaryText={(record) => record.title}
+                    secondaryText={(record) => limitWords(record.description,10)}
+                    tertiaryText={(record) => (
+                        <ImageCell src={record.image_url} />
+                    )}
+                />
+            ) : (
+                <Datagrid rowClick="edit">
+                    <FunctionField
+                        label="Title"
+                        render={(record) => limitWords(record.title, 5)}
+                        sx={columnWidth(400, 700)}
+                    />
+                    <FunctionField
+                        label="Description"
+                        render={(record) => limitWords(record.description, 5)}
+                        sx={columnWidth(400, 700)}
+                    />
+                    <FunctionField
+                        label="Image"
+                        render={(record) => (
+                            <ImageCell src={record.image_url} />
+                        )}
+                    />
+                </Datagrid>
+            )}
+        </List>
+    );
+};
 
 // Create
 export const SertifikatCreate = (props) => (
