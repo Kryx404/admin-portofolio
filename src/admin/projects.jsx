@@ -18,6 +18,7 @@ import {
     SelectInput,
 } from "react-admin";
 import ImageCell from "../utils/ImageCell";
+import { limitWords, limitChars } from "../utils/textLimit";
 
 // List
 export const ProjectList = (props) => (
@@ -26,13 +27,7 @@ export const ProjectList = (props) => (
             <TextField source="title" />
             <FunctionField
                 label="Description"
-                render={(record) => {
-                    const text = record.description || "";
-                    const words = text.split(" ");
-                    return words.length > 20
-                        ? words.slice(0, 20).join(" ") + "..."
-                        : text;
-                }}
+                render={(record) => limitWords(record.description)}
             />
             <FunctionField
                 label="Image"
@@ -46,8 +41,14 @@ export const ProjectList = (props) => (
                 link={false}>
                 <TextField source="kategori" />
             </ReferenceField>
-            <TextField source="github" />
-            <TextField source="preview" />
+            <FunctionField
+                label="Github"
+                render={(record) => limitChars(record.github)}
+            />
+            <FunctionField
+                label="Preview"
+                render={(record) => limitChars(record.preview)}
+            />
             <DateField source="created_at" />
         </Datagrid>
     </List>
