@@ -1,4 +1,4 @@
-import { Admin, Resource, Login } from "react-admin";
+import { Admin, Resource, Login, bwLightTheme, bwDarkTheme  } from "react-admin";
 import supabaseDataProvider from "./supabaseDataProvider";
 import authProvider from "./authProvider";
 import {
@@ -27,7 +27,9 @@ const MyAdmin = () => (
     <Admin
         dataProvider={supabaseDataProvider}
         authProvider={authProvider}
-        loginPage={CustomLoginPage}>
+        loginPage={CustomLoginPage}
+        theme={bwLightTheme}
+        darkTheme={bwDarkTheme}>
         <Resource
             name="projects"
             list={ProjectList}
