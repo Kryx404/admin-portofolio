@@ -21,9 +21,28 @@ async function uploadImage(file, folder = "project") {
 const supabaseDataProvider = {
     // eslint-disable-next-line no-unused-vars
     getList: async (resource, params) => {
-        const { data, error, count } = await supabase
+        const { page = 1, perPage = 10 } = params.pagination || {};
+        const { field = "created_at", order = "DESC" } = params.sort || {};
+        const start = (page - 1) * perPage;
+        const end = start + perPage - 1;
+
+        let query = supabase
             .from(resource)
-            .select("*", { count: "exact" });
+            .select("*", { count: "exact" })
+            .order(field, { ascending: order === "ASC" });
+
+        // Debug log untuk cek parameter sorting
+        console.log("Sorting params:", { field, order, resource });
+
+        // Apply filters if any
+        if (params.filter) {
+            Object.keys(params.filter).forEach((key) => {
+                query = query.eq(key, params.filter[key]);
+            });
+        }
+
+        query = query.range(start, end);
+        const { data, count, error } = await query;
         if (error) throw error;
         return {
             data,
