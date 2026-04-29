@@ -20,6 +20,12 @@ import {
     SertifikatShow,
 } from "./sertifikat";
 import { CategoryList, CategoryEdit, CategoryCreate } from "./project_category";
+import {
+    PengalamanList,
+    PengalamanCreate,
+    PengalamanEdit,
+    PengalamanShow,
+} from "./pengalaman";
 
 const CustomLoginPage = () => <Login usernameLabel="Email" />;
 
@@ -56,6 +62,13 @@ const MyAdmin = () => (
             list={CategoryList}
             edit={CategoryEdit}
             create={CategoryCreate}
+        />
+        <Resource
+            name="pengalaman"
+            list={PengalamanList}
+            edit={PengalamanEdit}
+            create={PengalamanCreate}
+            show={PengalamanShow}
         />
     </Admin>
 );
